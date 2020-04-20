@@ -13,6 +13,7 @@ private:
 	int id_acc, role;
 	string username, password;
 public:
+	//class's default constructor
 	Registration() {
 		id_acc = 1;
 		username = "";
@@ -20,25 +21,23 @@ public:
 		role = 0;
 	}
 
-	vector<Registration> accounts;
-	vector<int> accounts_id, accounts_role;
-	vector<string> accounts_us, accounts_pass;
+	vector<Registration> accounts; //vector that contains data about all accounts
+	vector<int> accounts_id, accounts_role; //vectors that contain data about IDs and roles of accounts  
+	vector<string> accounts_us, accounts_pass; //vectors that contain data about usernames and passwords of accounts
 
-	// write to an output stream
+	// overloading operator << 
 	friend ostream& operator << (ostream& outf, const Registration& acc) {
 		return outf << acc.id_acc << "\t" << acc.username << "\t" << acc.password << "\t" << acc.role << '\n';  // write one string per line, end with a blank line
 	}
 
-	void accounts_add(Registration acc, vector<Registration>& input) {
-		input.push_back(acc);
-	}
-
+	//function that handles input errors with displaying of message
 	void err_handler() {
 		cout << "Error! Follow the manual!" << endl;
 		cin.clear();
 		cin.ignore(256, '\n');
 	}
 
+	//function that constructs table form 
 	void table(int chc) {
 		if (chc == 1) {
 			cout << "--------" << "+---------------" << "+---------" << "------" << "+----" << endl;
@@ -50,8 +49,10 @@ public:
 		}
 	}
 
-	virtual int sign_in() {
+	//function that handle sign in menu
+	int sign_in(int chc) {
 
+		accounts_id.clear();
 		accounts_us.clear();
 		accounts_pass.clear();
 		accounts_role.clear();
@@ -60,12 +61,14 @@ public:
 
 		int temp_ind = 0;
 		int role = 0;
+		int id = 0;
 		string us_n;
 		string pass;
 
 		ifstream file("users.txt");
 		if (file.is_open()) {
 			while (file >> acc.id_acc >> acc.username >> acc.password >> acc.role) {
+				accounts_id.push_back(acc.id_acc);
 				accounts_us.push_back(acc.username);
 				accounts_pass.push_back(acc.password);
 				accounts_role.push_back(acc.role);
@@ -93,17 +96,23 @@ public:
 
 		if (us_n == accounts_us[temp_ind] && pass == accounts_pass[temp_ind]) {
 			role = accounts_role[temp_ind];
+			id = accounts_id[temp_ind];
 		}
 		else {
 			cout << "Your input is incorrect!" << endl;
 			cout << "Try again..." << endl;
-			sign_in();
+			sign_in(chc);
 		}
 
-		return role;
-
+		if (chc == 0) {
+			return role;
+		}
+		else if (chc == 1) {
+			return id;
+		}
 	}
 
+	//function that executes the adding of account
 	void add_acc(Registration acc) {
 
 		accounts.clear();
@@ -144,7 +153,7 @@ public:
 			cin >> acc.role;
 		}
 
-		acc.accounts_add(acc, accounts);
+		accounts.push_back(acc);
 
 		ofstream file_o;
 		file_o.open("users.txt", ios_base::app);
@@ -156,15 +165,18 @@ public:
 		file_o.close();
 	}
 
+	//function that executes the deleting of account
 	void delete_acc(Registration acc) {
 
 		accounts.clear();
+		accounts_id.clear();
 		accounts_us.clear();
 
 		ifstream file("users.txt");
 		if (file.is_open()) {
 			Registration acc;
 			while (file >> acc.id_acc >> acc.username >> acc.password >> acc.role) {
+				accounts_id.push_back(acc.id_acc);
 				accounts_us.push_back(acc.username);
 			}
 		}
@@ -189,6 +201,14 @@ public:
 				temp_ind = i;
 			}
 		}
+
+		cout << "Please, confirm: " << endl;
+
+		if (sign_in(1) == accounts_id[temp_ind]) {
+			cout << "You can't delete yourself!" << endl;
+			delete_acc(acc);
+		}
+
 		cout << '\n';
 
 		if (username_s == accounts_us[temp_ind]) {
@@ -237,6 +257,7 @@ public:
 		}
 	}
 
+	//function for viewing of all accounts
 	void view_acc(Registration acc) {
 		accounts.clear();
 		ifstream file("users.txt");
@@ -292,11 +313,6 @@ public:
 	vector<float> employees_slr; //vector that contains data about employees' salary
 	vector<string> employees_lst_name; //vector that contains data about employees' last name
 	vector<string> employees_fst_name; //vector that contains data about employees' first name
-
-	//function that exexutes the adding of employees' data in vector
-	void accounts_add(Admin empl, vector<Admin>& input) {
-		input.push_back(empl);
-	}
 
 	//function that handles input errors with displaying of message
 	void err_handler() {
@@ -1694,7 +1710,7 @@ public:
 
 		cout << "\tWELCOME TO THE PROGRAM" << endl;
 
-		int r = sign_in();
+		int r = sign_in(0);
 
 		switch (r) {
 		case 0:
@@ -1705,6 +1721,7 @@ public:
 	}
 };
 
+// Main function
 int main() {
 	Authorization auz;
 	auz.start_up();
