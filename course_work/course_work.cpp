@@ -4,29 +4,28 @@
 #include <vector>
 #include <algorithm>
 #include <conio.h>
-#include <cctype>
 using namespace std;
 
-//Registration class
-class Registration {
+//Accounts class
+class Accounts {
 private:
 	int id_acc, role;
 	string username, password;
 public:
 	//class's default constructor
-	Registration() {
+	Accounts() {
 		id_acc = 1;
 		username = "";
 		password = "";
 		role = 0;
 	}
 
-	vector<Registration> accounts; //vector that contains data about all accounts
+	vector<Accounts> accounts; //vector that contains data about all accounts
 	vector<int> accounts_id, accounts_role; //vectors that contain data about IDs and roles of accounts  
 	vector<string> accounts_us, accounts_pass; //vectors that contain data about usernames and passwords of accounts
 
 	// overloading operator << 
-	friend ostream& operator << (ostream& outf, const Registration& acc) {
+	friend ostream& operator << (ostream& outf, const Accounts& acc) {
 		return outf << acc.id_acc << "\t" << acc.username << "\t" << acc.password << "\t" << acc.role << '\n';  // write one string per line, end with a blank line
 	}
 
@@ -38,7 +37,7 @@ public:
 	}
 
 	//function that constructs table form 
-	void table(int chc) {
+	void table_acc(int chc) {
 		if (chc == 1) {
 			cout << "--------" << "+---------------" << "+---------" << "------" << "+----" << endl;
 			cout << "ID" << "\t|" << "Username" << "\t|" << "Password" << "\t|" << "Role" << endl;
@@ -49,22 +48,17 @@ public:
 		}
 	}
 
-	//function that handle sign in menu
-	int sign_in(int chc) {
-
+	//function that executes clearing of vectors
+	void clear_acc() {
+		accounts.clear();
 		accounts_id.clear();
 		accounts_us.clear();
 		accounts_pass.clear();
 		accounts_role.clear();
+	}
 
-		Registration acc;
-
-		int temp_ind = 0;
-		int role = 0;
-		int id = 0;
-		string us_n;
-		string pass;
-
+	//function that executes pushing data into function
+	void push_acc(Accounts acc){
 		ifstream file("users.txt");
 		if (file.is_open()) {
 			while (file >> acc.id_acc >> acc.username >> acc.password >> acc.role) {
@@ -77,6 +71,19 @@ public:
 		else {
 			cout << "Unable to open a file..." << endl;
 		}
+	}
+
+	//function that handle sign in menu
+	int sign_in(Accounts acc, int chc) {
+		int temp_ind = 0;
+		int role = 0;
+		int id = 0;
+		string us_n;
+		string pass;
+
+		clear_acc();
+
+		push_acc(acc);
 
 		cout << "Username: ";
 		cin >> us_n;
@@ -85,14 +92,13 @@ public:
 			cout << "Enter again: ";
 			cin >> us_n;
 		}
-		cout << "Password: ";
-		cin >> pass;
-
 		for (int i = 0; i < accounts_us.size(); i++) {
 			if (us_n == accounts_us[i]) {
 				temp_ind = i;
 			}
 		}
+		cout << "Password: ";
+		cin >> pass;
 
 		if (us_n == accounts_us[temp_ind] && pass == accounts_pass[temp_ind]) {
 			role = accounts_role[temp_ind];
@@ -101,32 +107,27 @@ public:
 		else {
 			cout << "Your input is incorrect!" << endl;
 			cout << "Try again..." << endl;
-			sign_in(chc);
+			sign_in(acc, chc);
 		}
 
 		if (chc == 0) {
 			return id;
 		}
-		else if (chc == 1) {
-			return role;
+		else {
+			if (role == 1) {
+				return 1;
+			}
+			else {
+				return 0;
+			}
 		}
 	}
 
 	//function that executes the adding of account
-	void add_acc(Registration acc) {
+	void add_acc(Accounts acc) {
+		clear_acc();
 
-		accounts.clear();
-		accounts_id.clear();
-		accounts_us.clear();
-
-		ifstream file("users.txt");
-		if (file.is_open()) {
-			while (file >> acc.id_acc >> acc.username >> acc.password >> acc.role) {
-				accounts_id.push_back(acc.id_acc);
-				accounts_us.push_back(acc.username);
-			}
-		}
-
+		push_acc(acc);
 		for (int i = 0; i < accounts_id.size(); i++) {
 			if (accounts_id[i] == accounts_id[accounts_id.size() - 1]) {
 				acc.id_acc = accounts_id[i] + 1;
@@ -157,7 +158,7 @@ public:
 
 		ofstream file_o;
 		file_o.open("users.txt", ios_base::app);
-		for (const Registration& acc : accounts) {
+		for (const Accounts& acc : accounts) {
 			file_o << acc;
 		}
 
@@ -166,23 +167,10 @@ public:
 	}
 
 	//function that executes the deleting of account
-	void delete_acc(Registration acc) {
+	void delete_acc(Accounts acc) {
+		clear_acc();
 
-		accounts.clear();
-		accounts_id.clear();
-		accounts_us.clear();
-
-		ifstream file("users.txt");
-		if (file.is_open()) {
-			Registration acc;
-			while (file >> acc.id_acc >> acc.username >> acc.password >> acc.role) {
-				accounts_id.push_back(acc.id_acc);
-				accounts_us.push_back(acc.username);
-			}
-		}
-		else {
-			cout << "Enable to open a file..." << endl;
-		}
+		push_acc(acc);
 
 		string username_s;
 		int temp_ind = 0;
@@ -203,7 +191,7 @@ public:
 
 		cout << "Admin identification: " << endl;
 
-		if (!(sign_in(0) == accounts_id[temp_ind])) {
+		if (!(sign_in(acc, 0) == accounts_id[temp_ind])) {
 			cout << '\n';
 
 			if (username_s == accounts_us[temp_ind]) {
@@ -263,17 +251,17 @@ public:
 	}
 
 	//function for viewing of all accounts
-	void view_acc(Registration acc) {
+	void view_acc(Accounts acc) {
 		accounts.clear();
 		ifstream file("users.txt");
 		if (file.is_open()) {
 			while (file >> acc.id_acc >> acc.username >> acc.password >> acc.role) {
 				accounts.push_back(acc);
 			}
-			table(1);
+			table_acc(1);
 			for (const auto& acc : accounts) {
 				cout << acc.id_acc << "\t|" << acc.username << "\t\t|" << acc.password << "\t\t|" << acc.role << '\n';;
-				table(2);
+				table_acc(2);
 			}
 		}
 		else {
@@ -283,8 +271,8 @@ public:
 	}
 };
 
-//Admin class
-class Admin : public Registration {
+//Mode class
+class Mode : public Accounts {
 private:
 	string lst_name, fst_name, mdl_name;
 	int id, tab_num, year, month, qnt_work_h, m_per_h;
@@ -292,7 +280,7 @@ private:
 public:
 
 	//class's default constructor
-	Admin() {
+	Mode() {
 		id = 1;
 		lst_name = "";
 		fst_name = "";
@@ -306,13 +294,13 @@ public:
 	}
 
 	//operator overloading for output
-	friend ostream& operator << (ostream& outf, const Admin& empl) {
+	friend ostream& operator << (ostream& outf, const Mode& empl) {
 		return outf << empl.id << '\t' << empl.lst_name << '\t' << empl.fst_name << '\t' << empl.mdl_name << '\t' << empl.tab_num << '\t'
 			<< empl.year << '\t' << empl.month << '\t' << empl.qnt_work_h << '\t' << empl.m_per_h << '\t' << empl.salary << '\n';  // write one string per line, end with a blank line
 	}
 
-	vector<Admin> employees; //vector that contains data about employees
-	vector<Admin> employees_list;
+	vector<Mode> employees; //vector that contains data about employees
+	vector<Mode> employees_list;
 	vector<int> employees_id; //vector that contains data about employees' ID
 	vector<int> employees_tb_num; //vector that contains data about employees' table number
 	vector<float> employees_slr; //vector that contains data about employees' salary
@@ -336,14 +324,13 @@ public:
 	void menu_back_frame(char chc) {
 		if (chc != 'y') {
 			_getch;
-			cout << '\n';
+			system("CLS");
 		}
 		ignore_func();
-		cout << '\n';
 	}
 
 	//function that constructs table form 
-	void table(Admin empl, int chc) {
+	void table(Mode empl, int chc) {
 		if (chc == 1) {
 			cout << "--------+" << "---------------" << "+---------------" << "+---------------" << "+---------------" <<
 				"+-------" << "+-------" << "+-------" << "+-------" << "+------------|" << endl;
@@ -362,40 +349,8 @@ public:
 		}
 	}
 
-	//function that executes calculation of salary
-	int salary_calc(int time, int money) {
-		int salary_start = time * money;
-		float salary = (salary_start * 88) / 100;
-
-		return salary;
-	}
-
-	//function that executes the adding of data about employees
-	void add_data(Admin empl) {
-
-		employees.clear();
-		employees_id.clear();
-		employees_tb_num.clear();
-
-		ifstream file_i("data.txt");
-		if (file_i.is_open()) {
-			while (file_i >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >>
-				empl.tab_num >> empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
-				employees_id.push_back(empl.id);
-				employees_tb_num.push_back(empl.tab_num);
-			}
-		}
-		else {
-			cout << "Unable to open a file..." << endl;
-		}
-		file_i.close();
-
-		for (int i = 0; i < employees_id.size(); i++) {
-			if (employees_id[i] == employees_id[employees_id.size() - 1]) {
-				empl.id = employees_id[i] + 1;
-			}
-		}
-
+	//function that creates blank form
+	void enter_data(Mode empl){
 		cout << "Enter the last name: ";
 		cin >> empl.lst_name;
 
@@ -419,19 +374,6 @@ public:
 			err_handler();
 			cout << "Enter again: ";
 			cin >> empl.year;
-		}
-
-		cout << "Enter the table number: ";
-		cin >> empl.tab_num;
-		while (cin.fail()) {
-			err_handler();
-			cout << "Enter again: ";
-			cin >> empl.tab_num;
-		}
-		while (count(employees_tb_num.begin(), employees_tb_num.end(), empl.tab_num)) {
-			cout << "Similar table number is already used..." << endl;
-			cout << "Enter again: ";
-			cin >> empl.tab_num;
 		}
 
 		cout << "Enter the quantity of work hours: ";
@@ -458,40 +400,117 @@ public:
 		}
 
 		employees.push_back(empl);
-
-		ofstream file;
-		file.open("data.txt", ios_base::app);
-		file << empl;
-		if (true) {
-			cout << "Data were successfully added!" << endl;
-		}
-		else {
-			cout << "Data weren't added..." << endl;
-		}
-		file.close();
-
-		cout << '\n';
 	}
 
-	//function that executes the editting of data about employees
-	void edit_data(Admin empl) {
+	//function that executes retrieving of old data
+	void old_info(Mode empl) {
+		cout << '\n';
+		cout << "Employee's data: " << endl;
+		cout << "ID: " << empl.id << endl;
+		cout << "Last name: " << empl.lst_name << endl;
+		cout << "First name: " << empl.fst_name << endl;
+		cout << "Middle name: " << empl.mdl_name << endl;
+		cout << "Month of employee's birthday: " << empl.month << endl;
+		cout << "Year of employee's birthday: " << empl.year << endl;
+		cout << "Table number: " << empl.tab_num << endl;
+		cout << "Quantity of work hours: " << empl.qnt_work_h << endl;
+		cout << "Amount of money he/she gets per hour: " << empl.m_per_h << endl;
+		cout << "Salary: " << empl.salary << endl;
+		employees.pop_back();
+	}
 
+	//function that executes calculation of salary
+	int salary_calc(int time, int money) {
+		int salary_start = time * money;
+		float salary = (salary_start * 88) / 100;
+
+		return salary;
+	}
+
+	//function that executes clearing of vectors
+	void clear() {
 		employees.clear();
 		employees_lst_name.clear();
+		employees_fst_name.clear();
+		employees_id.clear();
 		employees_tb_num.clear();
+		employees_slr.clear();
+	}
 
+	//function that executes pushing data into function
+	void push(Mode empl) {
 		ifstream file_i("data.txt");
 		if (file_i.is_open()) {
 			while (file_i >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >>
 				empl.tab_num >> empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
+				employees.push_back(empl);
 				employees_lst_name.push_back(empl.lst_name);
+				employees_fst_name.push_back(empl.fst_name);
+				employees_id.push_back(empl.id);
 				employees_tb_num.push_back(empl.tab_num);
+				employees_slr.push_back(empl.salary);
 			}
 		}
 		else {
 			cout << "Unable to open a file..." << endl;
 		}
 		file_i.close();
+	}
+
+	//function that executes writing data in file
+	void file_of() {
+		ofstream file;
+		file.open("data.txt", ios_base::app);
+		for (const auto& empl : employees) {
+			file << empl;
+		}
+		file.close();
+	}
+
+	//function that executes the adding of data about employees
+	void add_data(Mode empl) {
+
+		clear();
+		push(empl);
+		employees.clear();
+		for (int i = 0; i < employees_id.size(); i++) {
+			if (employees_id[i] == employees_id[employees_id.size() - 1]) {
+				empl.id = employees_id[i] + 1;
+			}
+		}
+
+		cout << "Enter the table number: ";
+		cin >> empl.tab_num;
+		while (cin.fail()) {
+			err_handler();
+			cout << "Enter again: ";
+			cin >> empl.tab_num;
+		}
+		while (count(employees_tb_num.begin(), employees_tb_num.end(), empl.tab_num)) {
+			cout << "Similar table number is already used..." << endl;
+			cout << "Enter again: ";
+			cin >> empl.tab_num;
+		}
+		enter_data(empl);
+
+		file_of();
+
+		if (true) {
+			cout << "Data were successfully added!" << endl;
+		}
+		else {
+			cout << "Data weren't added..." << endl;
+		}
+
+		cout << '\n';
+	}
+
+	//function that executes the editting of data about employees
+	void edit_data(Mode empl) {
+
+		clear();
+		push(empl);
+		employees.clear();
 
 		string lst_name_s;
 		int tb_n_s;
@@ -526,95 +545,34 @@ public:
 		if (lst_name_s == employees_lst_name[temp_ind] && tb_n_s == employees_tb_num[temp_ind]) {
 			ifstream file("data.txt");
 			if (file.is_open()) {
+				employees.clear();
 				while (file >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >> empl.tab_num >>
 					empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
 					employees.push_back(empl);
 					if (lst_name_s == empl.lst_name && tb_n_s == empl.tab_num) {
-						cout << '\n';
-						cout << "Old data: " << endl;
-						cout << "ID: " << empl.id << endl;
-						cout << "Last name: " << empl.lst_name << endl;
-						cout << "First name: " << empl.fst_name << endl;
-						cout << "Middle name: " << empl.mdl_name << endl;
-						cout << "Month of employee's birthday: " << empl.month << endl;
-						cout << "Year of employee's birthday: " << empl.year << endl;
-						cout << "Table number: " << empl.tab_num << endl;
-						cout << "Quantity of work hours: " << empl.qnt_work_h << endl;
-						cout << "Amount of money he/she gets per hour: " << empl.m_per_h << endl;
-						cout << "Salary: " << empl.salary << endl;
-
 						int temp_id = empl.id;
 						int temp_tbn = empl.tab_num;
 
-						employees.pop_back();
+						old_info(empl);
 
 						cout << '\n';
 						cout << "New data:" << endl;
 
 						empl.id = temp_id;
-
-						cout << "Enter the last name: ";
-						cin >> empl.lst_name;
-
-						cout << "Enter the first name: ";
-						cin >> empl.fst_name;
-
-						cout << "Enter the middle name: ";
-						cin >> empl.mdl_name;
-
-						cout << "Enter the month of employee's birthday (number): ";
-						cin >> empl.month;
-						while (cin.fail() || empl.month < 1 || empl.month > 13) {
-							err_handler();
-							cout << "Enter again: ";
-							cin >> empl.month;
-						}
-
-						cout << "Enter the year of employee's birthday: ";
-						cin >> empl.year;
-						while (cin.fail() || empl.year < 1 || empl.month > 2021) {
-							err_handler();
-							cout << "Enter again: ";
-							cin >> empl.year;
-						}
-
 						empl.tab_num = temp_tbn;
 
-						cout << "Enter the quantity of work hours: ";
-						cin >> empl.qnt_work_h;
-						while (cin.fail() || empl.qnt_work_h < 1) {
-							err_handler();
-							cout << "Enter again: ";
-							cin >> empl.qnt_work_h;
-						}
-
-						cout << "Enter the amount of money he/she gets per hour: ";
-						cin >> empl.m_per_h;
-						while (cin.fail() || empl.m_per_h < 1) {
-							err_handler();
-							cout << "Enter again: ";
-							cin >> empl.m_per_h;
-						}
-
-						if (empl.qnt_work_h >= 144) {
-							empl.salary = salary_calc(empl.qnt_work_h, empl.m_per_h) * 2;
-						}
-						else {
-							empl.salary = salary_calc(empl.qnt_work_h, empl.m_per_h);
-						}
-
-						employees.push_back(empl);
+						enter_data(empl);
 					}
-					remove("data.txt");
 				}
+				remove("data.txt");
 				ofstream n_file;
 				n_file.open("data.txt");
 				for (const auto& empl : employees) {
 					n_file << empl;
 				}
+				n_file.close();
 				cout << '\n';
 				cout << "Data were successfully edited!" << endl;
-				n_file.close();
 			}
 			else {
 				cout << "Doesn't enable to open a file..." << endl;
@@ -629,24 +587,10 @@ public:
 	}
 
 	//function that executes the deleting of data about employees
-	void delete_data(Admin empl) {
-
+	void delete_data(Mode empl) {
+		clear();
+		push(empl);
 		employees.clear();
-		employees_lst_name.clear();
-		employees_tb_num.clear();
-
-		ifstream file_i("data.txt");
-		if (file_i.is_open()) {
-			while (file_i >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >>
-				empl.tab_num >> empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
-				employees_lst_name.push_back(empl.lst_name);
-				employees_tb_num.push_back(empl.tab_num);
-			}
-		}
-		else {
-			cout << "Unable to open a file..." << endl;
-		}
-		file_i.close();
 
 		string lst_name_s;
 		int tb_n_s;
@@ -688,19 +632,7 @@ public:
 						empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
 						employees.push_back(empl);
 						if (lst_name_s == empl.lst_name && tb_n_s == empl.tab_num) {
-							cout << '\n';
-							cout << "Employee's data: " << endl;
-							cout << "ID: " << empl.id << endl;
-							cout << "Last name: " << empl.lst_name << endl;
-							cout << "First name: " << empl.fst_name << endl;
-							cout << "Middle name: " << empl.mdl_name << endl;
-							cout << "Month of employee's birthday: " << empl.month << endl;
-							cout << "Year of employee's birthday: " << empl.year << endl;
-							cout << "Table number: " << empl.tab_num << endl;
-							cout << "Quantity of work hours: " << empl.qnt_work_h << endl;
-							cout << "Amount of money he/she gets per hour: " << empl.m_per_h << endl;
-							cout << "Salary: " << empl.salary << endl;
-							employees.pop_back();
+							old_info(empl);
 						}
 						remove("data.txt");
 					}
@@ -731,39 +663,22 @@ public:
 	}
 
 	//function that executes the sorting by last name, table num and salary
-	void sort_data(Admin empl) {
-		int chc;
+	void sort_data(Mode empl, int chc_c) {
 		string temp;
-
-		employees.clear();
-		employees_lst_name.clear();
-		employees_tb_num.clear();
-		employees_slr.clear();
-
-		ifstream file_i("data.txt");
-		if (file_i.is_open()) {
-			while (file_i >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >>
-				empl.tab_num >> empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
-				employees.push_back(empl);
-				employees_lst_name.push_back(empl.lst_name);
-				employees_tb_num.push_back(empl.tab_num);
-				employees_slr.push_back(empl.salary);
-			}
-		}
-		else {
-			cout << "Unable to open a file..." << endl;
-		}
-		file_i.close();
+		int chc;
+		clear();
+		push(empl);
 
 		cout << "Which way you want to sort data?" << endl;
 		cout << "1 - By a last name" << endl;
 		cout << "2 - By a table number" << endl;
 		cout << "3 - By salary" << endl;
-		cout << "Your choice: ";
+		cout << "4 - Quit" << endl;
+		cout << "Your choice(number): ";
 		cin >> chc;
-		while (cin.fail() || chc < 1 || chc > 3) {
+		while (cin.fail() || chc < 1 || chc > 4) {
 			err_handler();
-			cout << "Your choice: ";
+			cout << "Enter again: ";
 			cin >> chc;
 		}
 
@@ -804,60 +719,55 @@ public:
 				}
 			}
 			break;
+		case 4:
+			cout << '\n';
+			if (chc_c==1) {
+				system("CLS");
+				admin_menu(empl);
+			}
+			else if (chc_c == 0) {
+				system("CLS");
+				user_menu(empl);
+			}
+			break;
 		}
 
 	}
 
 	//function that executes the searching by last name, first name and table number
-	void search_data(Admin empl) {
-
-		int chc;
+	void search_data(Mode empl, int chc_c) {
 		string lst_name_s, fst_name_s, s_s;
 		int i_s = 0;
 		int tb_n_s;
+		int chc;
 
-
-		employees_lst_name.clear();
-		employees_fst_name.clear();
-		employees_id.clear();
-
-		ifstream file_i("data.txt");
-		if (file_i.is_open()) {
-			while (file_i >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >>
-				empl.tab_num >> empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
-				employees_lst_name.push_back(empl.lst_name);
-				employees_fst_name.push_back(empl.fst_name);
-				employees_id.push_back(empl.id);
-			}
-		}
-		else {
-			cout << "Unable to open a file..." << endl;
-		}
-		file_i.close();
+		clear();
+		push(empl);
 
 		cout << "Which method do you want to use for searching data:\n";
 		cout << "1 - By last name;" << endl;
 		cout << "2 - By first name;" << endl;
 		cout << "3 - By table number;" << endl;
+		cout << "4 - Quit" << endl;
 		cout << "Your choice (number): ";
 		cin >> chc;
-		while (cin.fail() || chc < 1 || chc > 3) {
+		while (cin.fail() || chc < 1 || chc > 4) {
 			err_handler();
-			cout << "Your choice: ";
+			cout << "Enter again: ";
 			cin >> chc;
 		}
-
+		cout << '\n';
 		ifstream file("data.txt");
-		switch (chc) {
-		case 1:
-			cout << "Enter the last name of person: ";
-			cin >> lst_name_s;
-			while (!(count(employees_lst_name.begin(), employees_lst_name.end(), lst_name_s))) {
-				cout << "There isn't person with similar last name..." << endl;
-				cout << "Enter again: ";
+		if (file.is_open()) {
+			switch (chc) {
+			case 1:
+				cout << "Enter the last name of person: ";
 				cin >> lst_name_s;
-			}
-			if (file.is_open()) {
+				while (!(count(employees_lst_name.begin(), employees_lst_name.end(), lst_name_s))) {
+					cout << "There isn't person with similar last name..." << endl;
+					cout << "Enter again: ";
+					cin >> lst_name_s;
+				}
 				table(empl, 1);
 				while (file >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >> empl.tab_num >>
 					empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
@@ -868,23 +778,15 @@ public:
 						table(empl, 2);
 					}
 				}
-				if (lst_name_s != s_s) {
-					cout << "There isn't '" << lst_name_s << "' last name" << endl;
-				}
-			}
-			else {
-				cout << "Unable to open a file..." << endl;
-			}
-			break;
-		case 2:
-			cout << "Enter the first name of person: ";
-			cin >> fst_name_s;
-			while (!(count(employees_fst_name.begin(), employees_fst_name.end(), fst_name_s))) {
-				cout << "There isn't person with similar first name..." << endl;
-				cout << "Enter again: ";
+				break;
+			case 2:
+				cout << "Enter the first name of person: ";
 				cin >> fst_name_s;
-			}
-			if (file.is_open()) {
+				while (!(count(employees_fst_name.begin(), employees_fst_name.end(), fst_name_s))) {
+					cout << "There isn't person with similar first name..." << endl;
+					cout << "Enter again: ";
+					cin >> fst_name_s;
+				}
 				table(empl, 1);
 				while (file >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >> empl.tab_num >>
 					empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
@@ -895,29 +797,21 @@ public:
 						table(empl, 2);
 					}
 				}
-				if (fst_name_s != s_s) {
-					cout << "There isn't '" << fst_name_s << "' first name" << endl;
-				}
-			}
-			else {
-				cout << "Unable to open a file..." << endl;
-			}
-			break;
-		case 3:
-			cout << "Enter the table number of person: ";
-			cin >> tb_n_s;
-			while (cin.fail()) {
-				err_handler();
+				break;
+			case 3:
 				cout << "Enter the table number of person: ";
 				cin >> tb_n_s;
-			}
-			while (!(count(employees_tb_num.begin(), employees_tb_num.end(), tb_n_s))) {
-				ignore_func();
-				cout << "There isn't person with similar table number..." << endl;
-				cout << "Enter again: ";
-				cin >> tb_n_s;
-			}
-			if (file.is_open()) {
+				while (cin.fail()) {
+					err_handler();
+					cout << "Enter the table number of person: ";
+					cin >> tb_n_s;
+				}
+				while (!(count(employees_tb_num.begin(), employees_tb_num.end(), tb_n_s))) {
+					ignore_func();
+					cout << "There isn't person with similar table number..." << endl;
+					cout << "Enter again: ";
+					cin >> tb_n_s;
+				}
 				table(empl, 1);
 				while (file >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >> empl.tab_num >>
 					empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
@@ -928,44 +822,36 @@ public:
 						table(empl, 2);
 					}
 				}
-				if (tb_n_s != i_s) {
-					cout << "There isn't '" << tb_n_s << "' last name" << endl;
+				break;
+			case 4:
+				cout << '\n';
+				if (chc_c == 1) {
+					system("CLS");
+					admin_menu(empl);
 				}
-			}
-			else {
-				cout << "Unable to open a file..." << endl;
-			}
-			break;
-		}
-		file.close();
-	}
-
-	//function that defines how much a particular employee has earned
-	void define_money(Admin empl) {
-
-		string lst_name_s;
-		int tb_n_s, temp_ind = 0;
-		float salary_vv;
-
-		employees_lst_name.clear();
-		employees_fst_name.clear();
-		employees_id.clear();
-		employees_tb_num.clear();
-
-		ifstream file_i("data.txt");
-		if (file_i.is_open()) {
-			while (file_i >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >>
-				empl.tab_num >> empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
-				employees_lst_name.push_back(empl.lst_name);
-				employees_fst_name.push_back(empl.fst_name);
-				employees_id.push_back(empl.id);
-				employees_tb_num.push_back(empl.tab_num);
+				else if (chc_c == 0) {
+					system("CLS");
+					user_menu(empl);
+				}
+				break;
 			}
 		}
 		else {
 			cout << "Unable to open a file..." << endl;
 		}
-		file_i.close();
+		file.close();
+	}
+
+	//function that defines how much a particular employee has earned
+	void define_money(Mode empl) {
+
+		string lst_name_s;
+		int tb_n_s, temp_ind = 0;
+		float salary_vv;
+
+		clear();
+
+		push(empl);
 
 		cout << "Enter the last name of employee: ";
 		cin >> lst_name_s;
@@ -1036,7 +922,7 @@ public:
 	}
 
 	//function for viewing of all data
-	void view_data(Admin empl) {
+	void view_data(Mode empl) {
 
 		cout << "\n";
 		ifstream file("data.txt");
@@ -1053,27 +939,84 @@ public:
 		}
 	}
 
+	//function that handle user menu
+	void user_menu(Mode empl) {
+		int chc_i;
+		char chc_c;
+
+		do {
+			cout << "\t\t" << "USER MENU" << endl;
+			cout << "1 - Sort data" << endl;
+			cout << "2 - Search employee" << endl;
+			cout << "3 - View data" << endl;
+			cout << "4 - Quit" << endl;
+
+			cout << '\n';
+
+			cout << "Enter a number: ";
+			cin >> chc_i;
+			while (cin.fail() || chc_i < 1 || chc_i > 4) {
+				err_handler();
+				cout << "Enter again: ";
+				cin >> chc_i;
+			}
+			switch (chc_i) {
+			case 1:
+				system("CLS");
+				cout << "\t\t" << "SORT DATA" << endl;
+				do {
+					sort_data(empl, 0);
+					cout << '\n';
+					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
+					cin >> chc_c;
+					menu_back_frame(chc_c);
+				} while (chc_c == 'y');
+				break;
+			case 2:
+				system("CLS");
+				cout << "\t\t" << "SEARCH EMPLOYEE" << endl;
+				do {
+					search_data(empl, 0);
+					cout << '\n';
+					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
+					cin >> chc_c;
+					menu_back_frame(chc_c);
+				} while (chc_c == 'y');
+				break;
+			case 3:
+				system("CLS");
+				cout << "\t\t\t\t\t\t" << "VIEW DATA" << endl;
+				do {
+					view_data(empl);
+					cout << '\n';
+					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
+					cin >> chc_c;
+					menu_back_frame(chc_c);
+				} while (chc_c == 'y');
+				break;
+			case 4:
+				system("CLS");
+				cout << "\tWELCOME TO THE PROGRAM" << endl;
+				int r = sign_in(empl, 1);
+
+				switch (r) {
+				case 0:
+					system("CLS");
+					user_menu(empl);
+				case 1:
+					system("CLS");
+					admin_menu(empl);
+				}
+			}
+		} while (!(chc_i < 1) || !(chc_i > 4));
+	}
+
 	//function that handle admin menu
-	void admin_menu() {
-		Admin empl;
-		Registration acc;
+	void admin_menu(Mode empl) {
 
 		int chc_i;
 		char chc_c;
 
-		ifstream file_i("data.txt");
-		if (file_i.is_open()) {
-			while (file_i >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >>
-				empl.tab_num >> empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
-				employees.push_back(empl);
-				employees_id.push_back(empl.id);
-				employees_lst_name.push_back(empl.lst_name);
-				employees_fst_name.push_back(empl.fst_name);
-				employees_tb_num.push_back(empl.tab_num);
-				employees_slr.push_back(empl.salary);
-			}
-		}
-		file_i.close();
 
 		do {
 			cout << "\t\t" << "ADMIN MENU" << endl;
@@ -1087,19 +1030,20 @@ public:
 			cout << "8 - Add account" << endl;
 			cout << "9 - Delete account" << endl;
 			cout << "10 - View accounts" << endl;
+			cout << "11 - Quit " << endl;
 
 			cout << '\n';
 
 			cout << "Enter a number: ";
 			cin >> chc_i;
-			while (cin.fail() || chc_i < 1 || chc_i > 10) {
+			while (cin.fail() || chc_i < 1 || chc_i > 11) {
 				err_handler();
 				cout << "Enter again: ";
 				cin >> chc_i;
 			}
 			switch (chc_i) {
 			case 1:
-				cout << '\n';
+				system("CLS");
 				cout << "\t\t" << "ADD DATA" << endl;
 				do {
 					add_data(empl);
@@ -1111,7 +1055,7 @@ public:
 				break;
 
 			case 2:
-				cout << '\n';
+				system("CLS");
 				cout << "\t\t" << "EDIT DATA" << endl;
 				do {
 					edit_data(empl);
@@ -1122,7 +1066,7 @@ public:
 				} while (chc_c == 'y');
 				break;
 			case 3:
-				cout << '\n';
+				system("CLS");
 				cout << "\t\t" << "DELETE DATA" << endl;
 				do {
 					delete_data(empl);
@@ -1133,10 +1077,10 @@ public:
 				} while (chc_c == 'y');
 				break;
 			case 4:
-				cout << '\n';
+				system("CLS");
 				cout << "\t\t" << "SORT DATA" << endl;
 				do {
-					sort_data(empl);
+					sort_data(empl, 1);
 					cout << '\n';
 					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
 					cin >> chc_c;
@@ -1144,10 +1088,10 @@ public:
 				} while (chc_c == 'y');
 				break;
 			case 5:
-				cout << '\n';
+				system("CLS");
 				cout << "\t\t" << "SEARCH EMPLOYEE" << endl;
 				do {
-					search_data(empl);
+					search_data(empl, 1);
 					cout << '\n';
 					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
 					cin >> chc_c;
@@ -1155,7 +1099,7 @@ public:
 				} while (chc_c == 'y');
 				break;
 			case 6:
-				cout << '\n';
+				system("CLS");
 				cout << "\t\t" << "DEFINE EMPLOYEE'S SALARY" << endl;
 				do {
 					define_money(empl);
@@ -1166,8 +1110,8 @@ public:
 				} while (chc_c == 'y');
 				break;
 			case 7:
-				cout << '\n';
-				cout << "\t\t" << "VIEW DATA" << endl;
+				system("CLS");
+				cout << "\t\t\t\t\t\t" << "VIEW DATA" << endl;
 				do {
 					view_data(empl);
 					cout << '\n';
@@ -1178,10 +1122,10 @@ public:
 				break;
 
 			case 8:
-				cout << '\n';
+				system("CLS");
 				cout << "\t\t" << "ADD ACCOUNT" << endl;
 				do {
-					add_acc(acc);
+					add_acc(empl);
 					cout << '\n';
 					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
 					cin >> chc_c;
@@ -1190,10 +1134,10 @@ public:
 				break;
 
 			case 9:
-				cout << '\n';
+				system("CLS");
 				cout << "\t\t" << "DELETE ACCOUNT" << endl;
 				do {
-					delete_acc(acc);
+					delete_acc(empl);
 					cout << '\n';
 					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
 					cin >> chc_c;
@@ -1202,140 +1146,52 @@ public:
 				break;
 
 			case 10:
-				cout << '\n';
+				system("CLS");
 				cout << "\t\t" << "VIEW ACCOUNTS" << endl;
 				do {
-					view_acc(acc);
+					view_acc(empl);
 					cout << '\n';
 					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
 					cin >> chc_c;
 					menu_back_frame(chc_c);
 				} while (chc_c == 'y');
 				break;
-			}
-		} while (!(chc_i < 1) || !(chc_i > 10));
-	}
-};
+			case 11:
+				system("CLS");
+				cout << "\tWELCOME TO THE PROGRAM" << endl;
+				int r = sign_in(empl, 1);
 
-//User class
-class User : public Admin {
-private:
-	string lst_name, fst_name, mdl_name;
-	int id, tab_num, year, month, qnt_work_h, m_per_h;
-	float salary;
-public:
-	User() {
-		id = 1;
-		lst_name = "";
-		fst_name = "";
-		mdl_name = "";
-		tab_num = 0;
-		year = 0;
-		month = 0;
-		qnt_work_h = 0;
-		m_per_h = 0;
-		salary = 0.0;
+				switch (r) {
+				case 0:
+					system("CLS");
+					user_menu(empl);
+				case 1:
+					system("CLS");
+					admin_menu(empl);
+				}
+			}
+		} while (!(chc_i < 1) || !(chc_i > 11));
 	}
 
-	//function that handle admin menu
-	void user_menu() {
-		User empl;
-
-		int chc_i;
-		char chc_c;
-
-		do {
-			cout << "\t\t" << "USER MENU" << endl;
-			cout << "1 - Sort data" << endl;
-			cout << "2 - Search employee" << endl;
-			cout << "3 - Define employee's salary" << endl;
-			cout << "4 - View data" << endl;
-
-			cout << '\n';
-
-			cout << "Enter a number: ";
-			cin >> chc_i;
-			while (cin.fail() || chc_i < 1 || chc_i > 4) {
-				err_handler();
-				cout << "Enter again: ";
-				cin >> chc_i;
-			}
-			switch (chc_i) {
-			case 1:
-				cout << '\n';
-				cout << "\t\t" << "SORT DATA" << endl;
-				do {
-					sort_data(empl);
-					cout << '\n';
-					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
-					cin >> chc_c;
-					menu_back_frame(chc_c);
-				} while (chc_c == 'y');
-				break;
-			case 2:
-				cout << '\n';
-				cout << "\t\t" << "SEARCH EMPLOYEE" << endl;
-				do {
-					search_data(empl);
-					cout << '\n';
-					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
-					cin >> chc_c;
-					menu_back_frame(chc_c);
-				} while (chc_c == 'y');
-				break;
-			case 3:
-				cout << '\n';
-				cout << "\t\t" << "DEFINE EMPLOYEE'S SALARY" << endl;
-				do {
-					define_money(empl);
-					cout << '\n';
-					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
-					cin >> chc_c;
-					menu_back_frame(chc_c);
-				} while (chc_c == 'y');
-				break;
-			case 4:
-				cout << '\n';
-				cout << "\t\t" << "VIEW DATA" << endl;
-				do {
-					view_data(empl);
-					cout << '\n';
-					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
-					cin >> chc_c;
-					menu_back_frame(chc_c);
-				} while (chc_c == 'y');
-				break;
-			}
-		} while (!(chc_i < 1) || !(chc_i > 4));
-	}
 };
 
 //Authorization class
-class Authorization : public User {
-
+class Authorization : public Mode {
 public:
-	Authorization() {}
-
-
-	void err_handler() {
-		cin.clear();
-		cin.ignore(256, '\n');
-		cout << "Follow the manual!" << endl;
-	}
-
 	void start_up() {
-		Authorization us;
+		Authorization au;
 		int chc;
 
 		cout << "\tWELCOME TO THE PROGRAM" << endl;
 
-		int r = sign_in(1);
-
+		int r = sign_in(au, 1);
 		switch (r) {
 		case 0:
-			user_menu();
+			system("CLS");
+			user_menu(au);
 		case 1:
-			admin_menu();
+			system("CLS");
+			admin_menu(au);
 		}
 	}
 };

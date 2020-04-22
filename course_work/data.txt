@@ -1,4 +1,4 @@
-1	tan	reff	fsf	5	45325	4	5455	535	5.13643e+06
+1	den	stan	klaq	5	1999	6	85	12	897
 2	mdses	ertr	tgdf	87	757	5	4	7	24
 3	ban	rwere	tetrre	547	5353	4	5	53	233
 4	wqqwe	ewssd	weds	12	354	3	543	53	50650
@@ -9,5 +9,10 @@
 9	snack	sever	alser	56	2321	12	34	53	1585
 10	kobst	rost	ostpa	23	2234	2	424	32	23878
 11	bron	nazar	weqe	54	45	2	654	6	6906
-12	ewewe	rwrw	rwqrw	3	423	3	42	43	1589
-13	ewer	werqr	rwrr	6	34	4	64	64	3604
+12	quatro	porto	masser	3	1222	12	12	21	221
+13	qqq	www	eee	6	222	11	1	3	2
+14	qwertz	asdf	zxcv	1	1	1	1	1	0
+15	tyt	utu	urt	8	55	4	6	5	26
+16	qaa	qqq	eee	36	4	3	545	4	3836
+17	vvvv	bbbb	nnnn	4	4	1	54	6	285
+18	ewrw	dfsd	erw	7	4	3	3	4	10
