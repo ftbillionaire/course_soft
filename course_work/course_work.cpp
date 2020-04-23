@@ -73,6 +73,43 @@ public:
 		}
 	}
 
+	//function that executes retrieving of old data
+	void old_acc(Accounts acc){
+		cout << '\n';
+		cout << "Old data:" << endl;
+		cout << '\n';
+		cout << "Account's data: " << endl;
+		cout << "ID: " << acc.id_acc << endl;
+		cout << "Username: " << acc.username << endl;
+		cout << "Password: " << acc.password << endl;
+		cout << "Role: " << acc.role << endl;
+		accounts.pop_back();
+	}
+
+	//function that creates blank form
+	void enter_acc(Accounts acc) {
+		cout << "Username: ";
+		cin >> acc.username;
+		while (count(accounts_us.begin(), accounts_us.end(), acc.username)) {
+			cout << "Similar USERNAME already exists..." << endl;
+			cout << "Username: ";
+			cin >> acc.username;
+		}
+		cout << "Password: ";
+		cin >> acc.password;
+
+		cout << "App role (admin - 1 / user - 0): ";
+		cin >> acc.role;
+
+		while (cin.fail() || !(role == 0 || role == 1)) {
+			err_handler();
+			cout << "App role (admin - 1 / user - 0): ";
+			cin >> acc.role;
+		}
+
+		accounts.push_back(acc);
+	}
+
 	//function that handle sign in menu
 	int sign_in(Accounts acc, int chc) {
 		int temp_ind = 0;
@@ -134,27 +171,7 @@ public:
 			}
 		}
 
-		cout << "Username: ";
-		cin >> acc.username;
-		while (count(accounts_us.begin(), accounts_us.end(), acc.username)) {
-			cout << "Similar USERNAME already exists..." << endl;
-			cout << "Username: ";
-			cin >> acc.username;
-		}
-
-		cout << "Password: ";
-		cin >> acc.password;
-
-		cout << "App role (admin - 1 / user - 0): ";
-		cin >> acc.role;
-
-		while (cin.fail() || !(role == 0 || role == 1)) {
-			err_handler();
-			cout << "App role (admin - 1 / user - 0): ";
-			cin >> acc.role;
-		}
-
-		accounts.push_back(acc);
+		enter_acc(acc);
 
 		ofstream file_o;
 		file_o.open("users.txt", ios_base::app);
@@ -164,6 +181,85 @@ public:
 
 		cout << '\n';
 		file_o.close();
+	}
+
+	//function that executes the editting of account's info
+	void edit_acc(Accounts acc) {
+		string username_s;
+		int temp_ind = 0;
+		char chc;
+		cout << "Enter the username of account: ";
+		cin >> username_s;
+		while (!(count(accounts_us.begin(), accounts_us.end(), username_s))) {
+			cout << "There isn't person with similar last name..." << endl;
+			cout << "Enter again: ";
+			cin >> username_s;
+		}
+
+		for (int i = 0; i < accounts_us.size(); i++) {
+			if (username_s == accounts_us[i]) {
+				temp_ind = i;
+			}
+		}
+
+		cout << "Admin identification: " << endl;
+
+		if (!(sign_in(acc, 0) == accounts_id[temp_ind])) {
+			cout << '\n';
+			if (username_s == accounts_us[temp_ind]) {
+				cout << "Do you really want to edit this account? (yes-'y' / no - any letter): ";
+				cin >> chc;
+				if (chc == 'y') {
+					ifstream file("users.txt");
+					if (file.is_open()) {
+						while (file >> acc.id_acc >> acc.username >> acc.password >> acc.role) {
+							accounts.push_back(acc);
+							if (username_s == acc.username) {
+								int id_r = acc.id_acc;
+								old_acc(acc);
+
+								cout << '\n';
+								cout << "New data: " << endl;
+								acc.id_acc = id_r;
+								enter_acc(acc);
+							}
+						}
+						remove("users.txt");
+						ofstream n_file;
+						n_file.open("users.txt");
+						for (const auto& acc : accounts) {
+							n_file << acc;
+						}
+						n_file.close();
+
+						cout << '\n';
+						cout << "Account was successfully deleted" << endl;
+					}
+					else {
+						cout << "Unable to open a file..." << endl;
+					}
+				}
+				else{
+					_getch;
+					cin.ignore(256, '\n');
+				}
+			}
+			else {
+				cout << "It isn't account's username..." << endl;
+				cout << "Try again..." << endl;
+				cout << '\n';
+				delete_acc(acc);
+			}
+		}
+		else {
+			cout << '\n';
+			cout << "You can't edit yourself!" << endl;
+			cout << '\n';
+			view_acc(acc);
+			cout << '\n';
+			cout << "Try again..." << endl;
+			edit_acc(acc);
+		}
 	}
 
 	//function that executes the deleting of account
@@ -203,13 +299,7 @@ public:
 						while (file >> acc.id_acc >> acc.username >> acc.password >> acc.role) {
 							accounts.push_back(acc);
 							if (username_s == acc.username) {
-								cout << '\n';
-								cout << "Account's data: " << endl;
-								cout << "ID: " << acc.id_acc << endl;
-								cout << "Username: " << acc.username << endl;
-								cout << "Password: " << acc.password << endl;
-								cout << "Role: " << acc.role << endl;
-								accounts.pop_back();
+								old_acc(acc);
 							}
 						}
 						remove("users.txt");
@@ -239,13 +329,13 @@ public:
 				delete_acc(acc);
 			}
 		}
-
 		else {
 			cout << '\n';
 			cout << "You can't delete yourself!" << endl;
 			cout << '\n';
 			view_acc(acc);
 			cout << '\n';
+			cout << "Try again..." << endl;
 			delete_acc(acc);
 		}
 	}
@@ -1028,15 +1118,16 @@ public:
 			cout << "6 - Define employee's salary" << endl;
 			cout << "7 - View data" << endl;
 			cout << "8 - Add account" << endl;
-			cout << "9 - Delete account" << endl;
-			cout << "10 - View accounts" << endl;
-			cout << "11 - Quit " << endl;
+			cout << "9 - Edit account" << endl;
+			cout << "10 - Delete account" << endl;
+			cout << "11 - View accounts" << endl;
+			cout << "12 - Quit " << endl;
 
 			cout << '\n';
 
 			cout << "Enter a number: ";
 			cin >> chc_i;
-			while (cin.fail() || chc_i < 1 || chc_i > 11) {
+			while (cin.fail() || chc_i < 1 || chc_i > 12) {
 				err_handler();
 				cout << "Enter again: ";
 				cin >> chc_i;
@@ -1053,7 +1144,6 @@ public:
 					menu_back_frame(chc_c);
 				} while (chc_c == 'y');
 				break;
-
 			case 2:
 				system("CLS");
 				cout << "\t\t" << "EDIT DATA" << endl;
@@ -1120,7 +1210,6 @@ public:
 					menu_back_frame(chc_c);
 				} while (chc_c == 'y');
 				break;
-
 			case 8:
 				system("CLS");
 				cout << "\t\t" << "ADD ACCOUNT" << endl;
@@ -1132,8 +1221,18 @@ public:
 					menu_back_frame(chc_c);
 				} while (chc_c == 'y');
 				break;
-
 			case 9:
+				system("CLS");
+				cout << "\t\t" << "EDIT ACCOUNT" << endl;
+				do {
+					edit_acc(empl);
+					cout << '\n';
+					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
+					cin >> chc_c;
+					menu_back_frame(chc_c);
+				} while (chc_c == 'y');
+				break;
+			case 10:
 				system("CLS");
 				cout << "\t\t" << "DELETE ACCOUNT" << endl;
 				do {
@@ -1144,8 +1243,7 @@ public:
 					menu_back_frame(chc_c);
 				} while (chc_c == 'y');
 				break;
-
-			case 10:
+			case 11:
 				system("CLS");
 				cout << "\t\t" << "VIEW ACCOUNTS" << endl;
 				do {
@@ -1156,7 +1254,7 @@ public:
 					menu_back_frame(chc_c);
 				} while (chc_c == 'y');
 				break;
-			case 11:
+			case 12:
 				system("CLS");
 				cout << "\tWELCOME TO THE PROGRAM" << endl;
 				int r = sign_in(empl, 1);
@@ -1170,7 +1268,7 @@ public:
 					admin_menu(empl);
 				}
 			}
-		} while (!(chc_i < 1) || !(chc_i > 11));
+		} while (!(chc_i < 1) || !(chc_i > 12));
 	}
 
 };

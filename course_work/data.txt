@@ -16,3 +16,4 @@
 16	qaa	qqq	eee	36	4	3	545	4	3836
 17	vvvv	bbbb	nnnn	4	4	1	54	6	285
 18	ewrw	dfsd	erw	7	4	3	3	4	10
+19	wewer	sss	tyyy	88	2000	2	34	23	688
