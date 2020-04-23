@@ -1039,13 +1039,14 @@ public:
 			cout << "1 - Sort data" << endl;
 			cout << "2 - Search employee" << endl;
 			cout << "3 - View data" << endl;
-			cout << "4 - Quit" << endl;
+			cout << "4 - Define employee's salary" << endl;
+			cout << "5 - Quit" << endl;
 
 			cout << '\n';
 
 			cout << "Enter a number: ";
 			cin >> chc_i;
-			while (cin.fail() || chc_i < 1 || chc_i > 4) {
+			while (cin.fail() || chc_i < 1 || chc_i > 5) {
 				err_handler();
 				cout << "Enter again: ";
 				cin >> chc_i;
@@ -1086,6 +1087,17 @@ public:
 				break;
 			case 4:
 				system("CLS");
+				cout << "\t\t" << "DEFINE EMPLOYEE'S SALARY" << endl;
+				do {
+					define_money(empl);
+					cout << '\n';
+					cout << "Do you want to repeat this procedure?(yes - 'y', no - another letter): ";
+					cin >> chc_c;
+					menu_back_frame(chc_c);
+				} while (chc_c == 'y');
+				break;
+			case 5:
+				system("CLS");
 				cout << "\tWELCOME TO THE PROGRAM" << endl;
 				int r = sign_in(empl, 1);
 
@@ -1098,7 +1110,7 @@ public:
 					admin_menu(empl);
 				}
 			}
-		} while (!(chc_i < 1) || !(chc_i > 4));
+		} while (!(chc_i < 1) || !(chc_i > 5));
 	}
 
 	//function that handle admin menu
