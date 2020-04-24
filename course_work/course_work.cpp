@@ -1,9 +1,9 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <conio.h>
+#include <iostream> //standard library for input/output processes
+#include <fstream> //library for file working
+#include <string> //library that allows using of string type
+#include <vector> //library that allows using of vector
+#include <algorithm> //library for the sort function
+#include <conio.h> //header file for '_getch' function  
 using namespace std;
 
 //Accounts class
