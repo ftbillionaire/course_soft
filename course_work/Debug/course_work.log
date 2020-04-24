@@ -1,23 +1,20 @@
 ﻿  course_work.cpp
 C:\Users\777\source\repos\course_work\course_work\course_work.cpp(130): warning C4018: '<': signed/unsigned mismatch
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(176): warning C4018: '<': signed/unsigned mismatch
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(209): warning C4018: '<': signed/unsigned mismatch
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(248): warning C4551: function call missing argument list
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(287): warning C4018: '<': signed/unsigned mismatch
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(321): warning C4551: function call missing argument list
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(416): warning C4551: function call missing argument list
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(487): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(490): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(516): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(518): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(567): warning C4018: '<': signed/unsigned mismatch
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(633): warning C4018: '<': signed/unsigned mismatch
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(709): warning C4018: '<': signed/unsigned mismatch
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(739): warning C4551: function call missing argument list
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(775): warning C4018: '<': signed/unsigned mismatch
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(787): warning C4018: '<': signed/unsigned mismatch
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(964): warning C4018: '<': signed/unsigned mismatch
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(986): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(990): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\777\source\repos\course_work\course_work\course_work.cpp(1289): warning C4101: 'chc': unreferenced local variable
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(185): warning C4018: '<': signed/unsigned mismatch
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(228): warning C4551: function call missing argument list
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(265): warning C4018: '<': signed/unsigned mismatch
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(372): warning C4551: function call missing argument list
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(443): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(446): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(472): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(474): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(542): warning C4018: '<': signed/unsigned mismatch
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(586): warning C4551: function call missing argument list
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(609): warning C4018: '<': signed/unsigned mismatch
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(689): warning C4018: '<': signed/unsigned mismatch
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(701): warning C4018: '<': signed/unsigned mismatch
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(877): warning C4018: '<': signed/unsigned mismatch
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(904): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(908): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\777\source\repos\course_work\course_work\course_work.cpp(1207): warning C4101: 'chc': unreferenced local variable
   course_work.vcxproj -> C:\Users\777\source\repos\course_work\Debug\course_work.exe

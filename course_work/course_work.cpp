@@ -76,7 +76,7 @@ public:
 	//function that executes retrieving of old data
 	void old_acc(Accounts acc){
 		cout << '\n';
-		cout << "Old data:" << endl;
+		cout << "Account's data:" << endl;
 		cout << "ID: " << acc.id_acc << endl;
 		cout << "Username: " << acc.username << endl;
 		cout << "Password: " << acc.password << endl;
@@ -168,6 +168,95 @@ public:
 		n_file.close();
 	}
 
+	//function that executes creating of delete-edit form
+	void del_ed_acc(Accounts acc, char fn_chc, string e_d, string e_d_mes){
+		string username_s;
+		int temp_ind = 0;
+		char chc;
+
+		cout << "Enter the username of account: ";
+		cin >> username_s;
+		while (!(count(accounts_us.begin(), accounts_us.end(), username_s))) {
+			cout << "There isn't person with similar last name..." << endl;
+			cout << "Enter again: ";
+			cin >> username_s;
+		}
+
+		for (int i = 0; i < accounts_us.size(); i++) {
+			if (username_s == accounts_us[i]) {
+				temp_ind = i;
+			}
+		}
+
+		cout << "Admin identification: " << endl;
+
+		if (!(sign_in(acc, 0) == accounts_id[temp_ind])) {
+			cout << '\n';
+			if (username_s == accounts_us[temp_ind]) {
+				cout << "Do you really want to "<< e_d << " this account? (yes-'y' / no - any letter): ";
+				cin >> chc;
+				if (chc == 'y') {
+					ifstream file("users.txt");
+					if (file.is_open()) {
+						while (file >> acc.id_acc >> acc.username >> acc.password >> acc.role) {
+							accounts.push_back(acc);
+							if (username_s == acc.username) {
+								int id_r = acc.id_acc;
+								old_acc(acc);
+								if (fn_chc == 'e') {
+									cout << '\n';
+									cout << "New data: " << endl;
+									acc.id_acc = id_r;
+									enter_acc(acc);
+								}
+								else {
+									continue;
+								}
+							}
+						}
+						remove("users.txt");
+						file_of_acc();
+
+						cout << '\n';
+						cout << "Account was successfully " << e_d_mes << '!' << endl;
+					}
+					else {
+						cout << "Unable to open a file..." << endl;
+					}
+				}
+				else {
+					_getch;
+					cin.ignore(256, '\n');
+				}
+			}
+			else {
+				cout << "It isn't account's username..." << endl;
+				cout << "Try again..." << endl;
+				cout << '\n';
+				if (fn_chc == 'e') {
+					edit_acc(acc);
+				}
+				else {
+					delete_acc(acc);
+				}
+			}
+		}
+		else {
+			cout << '\n';
+			cout << "You can't edit yourself!" << endl;
+			cout << '\n';
+			view_acc(acc);
+			cout << '\n';
+			cout << "Try again..." << endl;
+			if (fn_chc == 'e') {
+				edit_acc(acc);
+			}
+			else {
+				delete_acc(acc);
+			}
+		}
+	}
+
 	//function that executes the adding of account
 	void add_acc(Accounts acc) {
 		clear_acc();
@@ -195,149 +284,16 @@ public:
 		push_acc(acc);
 		accounts.clear();
 
-		string username_s;
-		int temp_ind = 0;
-		char chc;
-		cout << "Enter the username of account: ";
-		cin >> username_s;
-		while (!(count(accounts_us.begin(), accounts_us.end(), username_s))) {
-			cout << "There isn't person with similar last name..." << endl;
-			cout << "Enter again: ";
-			cin >> username_s;
-		}
-
-		for (int i = 0; i < accounts_us.size(); i++) {
-			if (username_s == accounts_us[i]) {
-				temp_ind = i;
-			}
-		}
-
-		cout << "Admin identification: " << endl;
-
-		if (!(sign_in(acc, 0) == accounts_id[temp_ind])) {
-			cout << '\n';
-			if (username_s == accounts_us[temp_ind]) {
-				cout << "Do you really want to edit this account? (yes-'y' / no - any letter): ";
-				cin >> chc;
-				if (chc == 'y') {
-					ifstream file("users.txt");
-					if (file.is_open()) {
-						while (file >> acc.id_acc >> acc.username >> acc.password >> acc.role) {
-							accounts.push_back(acc);
-							if (username_s == acc.username) {
-								int id_r = acc.id_acc;
-								old_acc(acc);
-
-								cout << '\n';
-								cout << "New data: " << endl;
-								acc.id_acc = id_r;
-								enter_acc(acc);
-							}
-						}
-						remove("users.txt");
-						file_of_acc();
-
-						cout << '\n';
-						cout << "Account was successfully edited" << endl;
-					}
-					else {
-						cout << "Unable to open a file..." << endl;
-					}
-				}
-				else{
-					_getch;
-					cin.ignore(256, '\n');
-				}
-			}
-			else {
-				cout << "It isn't account's username..." << endl;
-				cout << "Try again..." << endl;
-				cout << '\n';
-				delete_acc(acc);
-			}
-		}
-		else {
-			cout << '\n';
-			cout << "You can't edit yourself!" << endl;
-			cout << '\n';
-			view_acc(acc);
-			cout << '\n';
-			cout << "Try again..." << endl;
-			edit_acc(acc);
-		}
+		del_ed_acc(acc, 'e', "edit", "edited");
+		
 	}
 
 	//function that executes the deleting of account
 	void delete_acc(Accounts acc) {
 		clear_acc();
-
 		push_acc(acc);
 
-		string username_s;
-		int temp_ind = 0;
-		char chc;
-		cout << "Enter the username of account: ";
-		cin >> username_s;
-		while (!(count(accounts_us.begin(), accounts_us.end(), username_s))) {
-			cout << "There isn't person with similar last name..." << endl;
-			cout << "Enter again: ";
-			cin >> username_s;
-		}
-
-		for (int i = 0; i < accounts_us.size(); i++) {
-			if (username_s == accounts_us[i]) {
-				temp_ind = i;
-			}
-		}
-
-		cout << "Admin identification: " << endl;
-
-		if (!(sign_in(acc, 0) == accounts_id[temp_ind])) {
-			cout << '\n';
-
-			if (username_s == accounts_us[temp_ind]) {
-				cout << "Do you really want to delete this account? (yes-'y' / no - any letter): ";
-				cin >> chc;
-				if (chc == 'y') {
-					ifstream file("users.txt");
-					if (file.is_open()) {
-						while (file >> acc.id_acc >> acc.username >> acc.password >> acc.role) {
-							accounts.push_back(acc);
-							if (username_s == acc.username) {
-								old_acc(acc);
-							}
-						}
-						remove("users.txt");
-						file_of_acc();
-
-						cout << '\n';
-						cout << "Account was successfully deleted" << endl;
-					}
-					else {
-						cout << "Unable to open a file..." << endl;
-					}
-				}
-				else {
-					_getch;
-					cin.ignore(256, '\n');
-				}
-			}
-			else {
-				cout << "It isn't account's username..." << endl;
-				cout << "Try again..." << endl;
-				cout << '\n';
-				delete_acc(acc);
-			}
-		}
-		else {
-			cout << '\n';
-			cout << "You can't delete yourself!" << endl;
-			cout << '\n';
-			view_acc(acc);
-			cout << '\n';
-			cout << "Try again..." << endl;
-			delete_acc(acc);
-		}
+		del_ed_acc(acc, 'd', "delete", "deleted");
 	}
 
 	//function for viewing of all accounts
@@ -454,32 +410,32 @@ public:
 		cout << "Enter the month of employee's birthday (number): ";
 		cin >> empl.month;
 		while (cin.fail() || empl.month < 1 || empl.month > 12) {
-			err_handler();
-			cout << "Enter again: ";
+			ignore_func();
+			cout << "Error! Enter again: ";
 			cin >> empl.month;
 		}
 
 		cout << "Enter the year of employee's birthday: ";
 		cin >> empl.year;
-		while (cin.fail() || empl.year < 1 || empl.month > 2021) {
-			err_handler();
-			cout << "Enter again: ";
+		while (cin.fail() || empl.year < 1 || empl.year > 2021) {
+			ignore_func();
+			cout << "Error!Enter again: ";
 			cin >> empl.year;
 		}
 
 		cout << "Enter the quantity of work hours: ";
 		cin >> empl.qnt_work_h;
 		while (cin.fail() || empl.qnt_work_h < 1) {
-			err_handler();
-			cout << "Enter again: ";
+			ignore_func();
+			cout << "Error! Enter again: ";
 			cin >> empl.qnt_work_h;
 		}
 
 		cout << "Enter the amount of money he/she gets per hour: ";
 		cin >> empl.m_per_h;
 		while (cin.fail() || empl.m_per_h < 1) {
-			err_handler();
-			cout << "Enter again: ";
+			ignore_func();
+			cout << "Error! Enter again: ";
 			cin >> empl.m_per_h;
 		}
 
@@ -558,6 +514,92 @@ public:
 		n_file.close();
 	}
 
+	//function that executes creating of delete-edit form
+	void del_ed_empl(Mode empl, char fn_chc, string e_d, string e_d_mes){
+		string lst_name_s;
+		int tb_n_s;
+		int temp_ind = 0;
+		char chc;
+
+		cout << "Enter the last name of employee: ";
+		cin >> lst_name_s;
+		while (!(count(employees_lst_name.begin(), employees_lst_name.end(), lst_name_s))) {
+			cout << "There isn't person with similar last name..." << endl;
+			cout << "Enter again: ";
+			cin >> lst_name_s;
+		}
+
+		cin.ignore(256, '\n');
+
+		cout << "Enter the table number of employee: ";
+		cin >> tb_n_s;
+		while (cin.fail()) {
+			err_handler();
+			cout << "Enter again: ";
+			cin >> tb_n_s;
+		}
+
+		for (int i = 0; i < employees_lst_name.size(); i++) {
+			if (lst_name_s == employees_lst_name[i] && tb_n_s == employees_tb_num[i]) {
+				temp_ind = i;
+			}
+		}
+
+		cout << '\n';
+
+		if (lst_name_s == employees_lst_name[temp_ind] && tb_n_s == employees_tb_num[temp_ind]) {
+			cout << "Do you really want to " << e_d << " this data? (yes-'y' / no - any letter): ";
+			cin >> chc;
+			if (chc == 'y') {
+				ifstream file("data.txt");
+				if (file.is_open()) {
+					while (file >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >> empl.tab_num >>
+						empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
+						employees.push_back(empl);
+						if (lst_name_s == empl.lst_name) {
+							int temp_id = empl.id;
+							int temp_tbn = empl.tab_num;
+							old_info(empl);
+							if (fn_chc == 'e') {
+								cout << '\n';
+								cout << "New data:" << endl;
+								empl.id = temp_id;
+								empl.tab_num = temp_tbn;
+								enter_data(empl);
+							}
+							else {
+								continue;
+							}
+						}
+					}
+					remove("data.txt");
+					file_of_empl();
+
+					cout << '\n';
+					cout << "Data was successfully " << e_d_mes << '!' << endl;
+				}
+				else {
+					cout << "Unable to open a file..." << endl;
+				}
+			}
+			else {
+				_getch;
+				cin.ignore(256, '\n');
+			}
+		}
+		else {
+			cout << "The data is incorrect!" << endl;
+			cout << "Try again..." << endl;
+			cout << '\n';
+			if (fn_chc == 'e') {
+				edit_data(empl);
+			}
+			else {
+				delete_data(empl);
+			}
+		}
+	}
+
 	//function that executes the adding of data about employees
 	void add_data(Mode empl) {
 
@@ -608,73 +650,7 @@ public:
 		push(empl);
 		employees.clear();
 
-		string lst_name_s;
-		int tb_n_s;
-		int temp_ind = 0;
-
-		cout << "Enter the last name of employee: ";
-		cin >> lst_name_s;
-		while (!(count(employees_lst_name.begin(), employees_lst_name.end(), lst_name_s))) {
-			cout << "There isn't person with similar last name..." << endl;
-			cout << "Enter again: ";
-			cin >> lst_name_s;
-		}
-
-		cin.ignore(256, '\n');
-
-		cout << "Enter the table number of employee: ";
-		cin >> tb_n_s;
-		while (cin.fail()) {
-			err_handler();
-			cout << "Enter again: ";
-			cin >> tb_n_s;
-		}
-
-		for (int i = 0; i < employees_lst_name.size(); i++) {
-			if (lst_name_s == employees_lst_name[i] && tb_n_s == employees_tb_num[i]) {
-				temp_ind = i;
-			}
-		}
-
-		cout << '\n';
-
-		if (lst_name_s == employees_lst_name[temp_ind] && tb_n_s == employees_tb_num[temp_ind]) {
-			ifstream file("data.txt");
-			if (file.is_open()) {
-				employees.clear();
-				while (file >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >> empl.tab_num >>
-					empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
-					employees.push_back(empl);
-					if (lst_name_s == empl.lst_name && tb_n_s == empl.tab_num) {
-						int temp_id = empl.id;
-						int temp_tbn = empl.tab_num;
-
-						old_info(empl);
-
-						cout << '\n';
-						cout << "New data:" << endl;
-
-						empl.id = temp_id;
-						empl.tab_num = temp_tbn;
-
-						enter_data(empl);
-					}
-				}
-				remove("data.txt");
-				file_of_empl();
-				cout << '\n';
-				cout << "Data were successfully edited!" << endl;
-			}
-			else {
-				cout << "Doesn't enable to open a file..." << endl;
-			}
-		}
-		else {
-			cout << "It isn't employee's table number..." << endl;
-			cout << "Try again..." << endl;
-			cout << '\n';
-			edit_data(empl);
-		}
+		del_ed_empl(empl, 'e', "edit", "edited");
 	}
 
 	//function that executes the deleting of data about employees
@@ -683,69 +659,7 @@ public:
 		push(empl);
 		employees.clear();
 
-		string lst_name_s;
-		int tb_n_s;
-		int temp_ind = 0;
-		char chc;
-
-		cout << "Enter the last name of employee: ";
-		cin >> lst_name_s;
-		while (!(count(employees_lst_name.begin(), employees_lst_name.end(), lst_name_s))) {
-			cout << "There isn't person with similar last name..." << endl;
-			cout << "Enter again: ";
-			cin >> lst_name_s;
-		}
-
-		cin.ignore(256, '\n');
-
-		cout << "Enter the table number of employee: ";
-		cin >> tb_n_s;
-		while (cin.fail()) {
-			err_handler();
-			cout << "Enter again: ";
-			cin >> tb_n_s;
-		}
-
-		for (int i = 0; i < employees_lst_name.size(); i++) {
-			if (lst_name_s == employees_lst_name[i] && tb_n_s == employees_tb_num[i]) {
-				temp_ind = i;
-			}
-		}
-		cout << '\n';
-
-		if (lst_name_s == employees_lst_name[temp_ind] && tb_n_s == employees_tb_num[temp_ind]) {
-			cout << "Do you really want to delete data about employee? (yes-'y' / no - any letter): ";
-			cin >> chc;
-			if (chc == 'y') {
-				ifstream file("data.txt");
-				if (file.is_open()) {
-					while (file >> empl.id >> empl.lst_name >> empl.fst_name >> empl.mdl_name >> empl.tab_num >>
-						empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
-						employees.push_back(empl);
-						if (lst_name_s == empl.lst_name && tb_n_s == empl.tab_num) {
-							old_info(empl);
-						}
-						remove("data.txt");
-					}
-					file_of_empl();
-					cout << '\n';
-					cout << "Data were successfully deleted" << endl;
-				}
-				else {
-					cout << "Unable to open a file..." << endl;
-				}
-			}
-			else {
-				_getch;
-				cin.ignore(256, '\n');
-			}
-		}
-		else {
-			cout << "It isn't employee's table number..." << endl;
-			cout << "Try again..." << endl;
-			cout << '\n';
-			delete_data(empl);
-		}
+		del_ed_empl(empl, 'd', "delete", "deleted");
 	}
 
 	//function that executes the sorting by last name, table num and salary
@@ -763,8 +677,8 @@ public:
 		cout << "Your choice(number): ";
 		cin >> chc;
 		while (cin.fail() || chc < 1 || chc > 4) {
-			err_handler();
-			cout << "Enter again: ";
+			ignore_func();
+			cout << "Error! Enter again: ";
 			cin >> chc;
 		}
 
@@ -838,8 +752,8 @@ public:
 		cout << "Your choice (number): ";
 		cin >> chc;
 		while (cin.fail() || chc < 1 || chc > 4) {
-			err_handler();
-			cout << "Enter again: ";
+			ignore_func();
+			cout << "Error! Enter again: ";
 			cin >> chc;
 		}
 		cout << '\n';
@@ -889,7 +803,7 @@ public:
 				cin >> tb_n_s;
 				while (cin.fail()) {
 					err_handler();
-					cout << "Enter the table number of person: ";
+					cout << "Enter again: ";
 					cin >> tb_n_s;
 				}
 				while (!(count(employees_tb_num.begin(), employees_tb_num.end(), tb_n_s))) {
@@ -953,7 +867,6 @@ public:
 		cout << "Enter the table number of employee: ";
 		cin >> tb_n_s;
 		while (cin.fail()) {
-			cout << '\n';
 			err_handler();
 			cout << "Enter again: ";
 			cin >> tb_n_s;
@@ -979,6 +892,11 @@ public:
 						cout << "Enter the period of time (in hours): ";
 						int period_tm;
 						cin >> period_tm;
+						while (cin.fail()) {
+							err_handler();
+							cout << "Enter again: ";
+							cin >> period_tm;
+						}
 
 						cout << '\n';
 
@@ -999,7 +917,7 @@ public:
 			}
 		}
 		else {
-			cout << "It isn't employee's table number..." << endl;
+			cout << "The data is incorrect!" << endl;
 			cout << "Try again..." << endl;
 			cout << '\n';
 			define_money(empl);
@@ -1043,8 +961,8 @@ public:
 			cout << "Enter a number: ";
 			cin >> chc_i;
 			while (cin.fail() || chc_i < 1 || chc_i > 5) {
-				err_handler();
-				cout << "Enter again: ";
+				ignore_func();
+				cout << "Error! Enter again: ";
 				cin >> chc_i;
 			}
 			switch (chc_i) {
@@ -1136,8 +1054,8 @@ public:
 			cout << "Enter a number: ";
 			cin >> chc_i;
 			while (cin.fail() || chc_i < 1 || chc_i > 12) {
-				err_handler();
-				cout << "Enter again: ";
+				ignore_func();
+				cout << "Error! Enter again: ";
 				cin >> chc_i;
 			}
 			switch (chc_i) {
