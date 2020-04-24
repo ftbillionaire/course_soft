@@ -77,8 +77,6 @@ public:
 	void old_acc(Accounts acc){
 		cout << '\n';
 		cout << "Old data:" << endl;
-		cout << '\n';
-		cout << "Account's data: " << endl;
 		cout << "ID: " << acc.id_acc << endl;
 		cout << "Username: " << acc.username << endl;
 		cout << "Password: " << acc.password << endl;
@@ -160,6 +158,16 @@ public:
 		}
 	}
 
+	//function that executes writing accounts's info in file
+	void file_of_acc() {
+		ofstream n_file;
+		n_file.open("users.txt");
+		for (const auto& acc : accounts) {
+			n_file << acc;
+		}
+		n_file.close();
+	}
+
 	//function that executes the adding of account
 	void add_acc(Accounts acc) {
 		clear_acc();
@@ -173,18 +181,20 @@ public:
 
 		enter_acc(acc);
 
-		ofstream file_o;
-		file_o.open("users.txt", ios_base::app);
-		for (const Accounts& acc : accounts) {
-			file_o << acc;
+		ofstream n_file;
+		n_file.open("users.txt", ios_base::app);
+		for (const auto& acc : accounts) {
+			n_file << acc;
 		}
-
-		cout << '\n';
-		file_o.close();
+		n_file.close();
 	}
 
 	//function that executes the editting of account's info
 	void edit_acc(Accounts acc) {
+		clear_acc();
+		push_acc(acc);
+		accounts.clear();
+
 		string username_s;
 		int temp_ind = 0;
 		char chc;
@@ -225,15 +235,10 @@ public:
 							}
 						}
 						remove("users.txt");
-						ofstream n_file;
-						n_file.open("users.txt");
-						for (const auto& acc : accounts) {
-							n_file << acc;
-						}
-						n_file.close();
+						file_of_acc();
 
 						cout << '\n';
-						cout << "Account was successfully deleted" << endl;
+						cout << "Account was successfully edited" << endl;
 					}
 					else {
 						cout << "Unable to open a file..." << endl;
@@ -303,12 +308,7 @@ public:
 							}
 						}
 						remove("users.txt");
-						ofstream n_file;
-						n_file.open("users.txt");
-						for (const auto& acc : accounts) {
-							n_file << acc;
-						}
-						n_file.close();
+						file_of_acc();
 
 						cout << '\n';
 						cout << "Account was successfully deleted" << endl;
@@ -417,6 +417,7 @@ public:
 			system("CLS");
 		}
 		ignore_func();
+		cout << '\n';
 	}
 
 	//function that constructs table form 
@@ -548,13 +549,13 @@ public:
 	}
 
 	//function that executes writing data in file
-	void file_of() {
-		ofstream file;
-		file.open("data.txt", ios_base::app);
+	void file_of_empl() {
+		ofstream n_file;
+		n_file.open("data.txt");
 		for (const auto& empl : employees) {
-			file << empl;
+			n_file << empl;
 		}
-		file.close();
+		n_file.close();
 	}
 
 	//function that executes the adding of data about employees
@@ -583,7 +584,12 @@ public:
 		}
 		enter_data(empl);
 
-		file_of();
+		ofstream file;
+		file.open("data.txt", ios_base::app);
+		for (const auto& empl : employees) {
+			file << empl;
+		}
+		file.close();
 
 		if (true) {
 			cout << "Data were successfully added!" << endl;
@@ -655,12 +661,7 @@ public:
 					}
 				}
 				remove("data.txt");
-				ofstream n_file;
-				n_file.open("data.txt");
-				for (const auto& empl : employees) {
-					n_file << empl;
-				}
-				n_file.close();
+				file_of_empl();
 				cout << '\n';
 				cout << "Data were successfully edited!" << endl;
 			}
@@ -726,12 +727,7 @@ public:
 						}
 						remove("data.txt");
 					}
-					ofstream n_file;
-					n_file.open("data.txt");
-					for (const auto& empl : employees) {
-						n_file << empl;
-					}
-					n_file.close();
+					file_of_empl();
 					cout << '\n';
 					cout << "Data were successfully deleted" << endl;
 				}
