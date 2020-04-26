@@ -742,6 +742,7 @@ public:
 
 		clear();
 		push(empl);
+		employees.clear();
 
 		cout << "Which method do you want to use for searching data:\n";
 		cout << "1 - By last name;" << endl;
