@@ -346,7 +346,6 @@ public:
 	}
 
 	vector<Mode> employees; //vector that contains data about employees
-	vector<Mode> employees_list;
 	vector<int> employees_id; //vector that contains data about employees' ID
 	vector<int> employees_tb_num; //vector that contains data about employees' table number
 	vector<float> employees_slr; //vector that contains data about employees' salary
