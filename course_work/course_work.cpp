@@ -8,7 +8,7 @@ using namespace std;
 
 //Accounts class
 class Accounts {
-private:
+protected:
 	int id_acc, role;
 	string username, password;
 public:
@@ -319,7 +319,7 @@ public:
 
 //Mode class
 class Mode : public Accounts {
-private:
+protected:
 	string lst_name, fst_name, mdl_name;
 	int id, tab_num, year, month, qnt_work_h, m_per_h;
 	float salary;
