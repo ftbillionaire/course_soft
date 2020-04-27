@@ -2,12 +2,13 @@
 #include <fstream> //library for file working
 #include <string> //library that allows using of string type
 #include <vector> //library that allows using of vector
-#include <algorithm> //library for the sort function
+#include <algorithm> //library for the sort and count functions
 #include <conio.h> //header file for '_getch' function  
-using namespace std;
+using namespace std; //open namespace of iostream
 
 //Accounts class
 class Accounts {
+//class's methods
 protected:
 	int id_acc, role;
 	string username, password;
@@ -24,9 +25,9 @@ public:
 	vector<int> accounts_id, accounts_role; //vectors that contain data about IDs and roles of accounts  
 	vector<string> accounts_us, accounts_pass; //vectors that contain data about usernames and passwords of accounts
 
-	// overloading operator << 
+	//overloading operator "<<" 
 	friend ostream& operator << (ostream& outf, const Accounts& acc) {
-		return outf << acc.id_acc << "\t" << acc.username << "\t" << acc.password << "\t" << acc.role << '\n';  // write one string per line, end with a blank line
+		return outf << acc.id_acc << "\t" << acc.username << "\t" << acc.password << "\t" << acc.role << '\n';
 	}
 
 	//function that handles input errors with displaying of message
@@ -69,7 +70,7 @@ public:
 			}
 		}
 		else {
-			cout << "Unable to open a file..." << endl;
+			cout << "File doesn't exist..." << endl;
 		}
 	}
 
@@ -110,7 +111,7 @@ public:
 
 	//function that handle sign in menu
 	int sign_in(Accounts acc, int chc) {
-		int temp_ind = 0;
+		int temp_ind = 0; //variable for loop
 		int role = 0;
 		int id = 0;
 		string us_n;
@@ -122,7 +123,8 @@ public:
 
 		cout << "Username: ";
 		cin >> us_n;
-		while (!count(accounts_us.begin(), accounts_us.end(), us_n)){
+		//"count" functions finds vector's element
+		while (!count(accounts_us.begin(), accounts_us.end(), us_n)){  
 			cout << "There isn't similar username in database..." << endl;
 			cout << "Enter again: ";
 			cin >> us_n;
@@ -140,8 +142,9 @@ public:
 			id = accounts_id[temp_ind];
 		}
 		else {
-			cout << "Your input is incorrect!" << endl;
+			cout << "Password is incorrect!" << endl;
 			cout << "Try again..." << endl;
+			cout << '\n';
 			sign_in(acc, chc);
 		}
 
@@ -171,11 +174,12 @@ public:
 	//function that executes creating of delete-edit form
 	void del_ed_acc(Accounts acc, char fn_chc, string e_d, string e_d_mes){
 		string username_s;
-		int temp_ind = 0;
-		char chc;
+		int temp_ind = 0; //variable for loop
+		char chc; //variable for choice
 
 		cout << "Enter the username of account: ";
 		cin >> username_s;
+		//"count" functions finds vector's element
 		while (!(count(accounts_us.begin(), accounts_us.end(), username_s))) {
 			cout << "There isn't person with similar last name..." << endl;
 			cout << "Enter again: ";
@@ -221,7 +225,7 @@ public:
 						cout << "Account was successfully " << e_d_mes << '!' << endl;
 					}
 					else {
-						cout << "Unable to open a file..." << endl;
+						cout << "File doesn't exist..." << endl;
 					}
 				}
 				else {
@@ -311,7 +315,7 @@ public:
 			}
 		}
 		else {
-			cout << "Unable to open a file..." << endl;
+			cout << "File doesn't exist..." << endl;
 		}
 		file.close();
 	}
@@ -319,6 +323,7 @@ public:
 
 //Mode class
 class Mode : public Accounts {
+//class's methods
 protected:
 	string lst_name, fst_name, mdl_name;
 	int id, tab_num, year, month, qnt_work_h, m_per_h;
@@ -369,7 +374,7 @@ public:
 	void menu_back_frame(char chc) {
 		if (chc != 'y') {
 			_getch;
-			system("CLS");
+			system("CLS"); //erase all data in console
 		}
 		ignore_func();
 		cout << '\n';
@@ -498,7 +503,7 @@ public:
 			}
 		}
 		else {
-			cout << "Unable to open a file..." << endl;
+			cout << "File doesn't exist..." << endl;
 		}
 		file_i.close();
 	}
@@ -517,11 +522,12 @@ public:
 	void del_ed_empl(Mode empl, char fn_chc, string e_d, string e_d_mes){
 		string lst_name_s;
 		int tb_n_s;
-		int temp_ind = 0;
-		char chc;
+		int temp_ind = 0; //variable for loop
+		char chc; //variable for choice
 
 		cout << "Enter the last name of employee: ";
 		cin >> lst_name_s;
+		//"count" functions finds vector's element
 		while (!(count(employees_lst_name.begin(), employees_lst_name.end(), lst_name_s))) {
 			cout << "There isn't person with similar last name..." << endl;
 			cout << "Enter again: ";
@@ -578,7 +584,7 @@ public:
 					cout << "Data was successfully " << e_d_mes << '!' << endl;
 				}
 				else {
-					cout << "Unable to open a file..." << endl;
+					cout << "File doesn't exist..." << endl;
 				}
 			}
 			else {
@@ -618,6 +624,7 @@ public:
 			cout << "Enter again: ";
 			cin >> empl.tab_num;
 		}
+		//"count" functions finds vector's element
 		while (count(employees_tb_num.begin(), employees_tb_num.end(), empl.tab_num)) {
 			cout << "Similar table number is already used..." << endl;
 			cout << "Enter again: ";
@@ -663,14 +670,13 @@ public:
 
 	//function that executes the sorting by last name, table num and salary
 	void sort_data(Mode empl, int chc_c) {
-		string temp;
-		int chc;
+		int chc; //variable for choice
 		clear();
 		push(empl);
 
 		cout << "Which way you want to sort data?" << endl;
-		cout << "1 - By a last name" << endl;
-		cout << "2 - By a table number" << endl;
+		cout << "1 - By last name" << endl;
+		cout << "2 - By table number" << endl;
 		cout << "3 - By salary" << endl;
 		cout << "4 - Quit" << endl;
 		cout << "Your choice(number): ";
@@ -683,7 +689,8 @@ public:
 
 		switch (chc) {
 		case 1:
-			sort(employees_lst_name.begin(), employees_lst_name.end());
+			sort(employees_lst_name.begin(), employees_lst_name.end()); //sort function that is contained in algorithm library
+			cout << "\t\t\t\t\tSORT BY LAST NAME" << endl;
 			table(empl, 1);
 			for (int i = 0; i < employees.size(); i++) {
 				for (const auto& empl : employees) {
@@ -695,7 +702,8 @@ public:
 			}
 			break;
 		case 2:
-			sort(employees_tb_num.begin(), employees_tb_num.end());
+			sort(employees_tb_num.begin(), employees_tb_num.end()); //sort function that is contained in algorithm library
+			cout << "\t\t\t\t\tSORT BY FIRST NAME" << endl;
 			table(empl, 1);
 			for (int i = 0; i < employees.size(); i++) {
 				for (const auto& empl : employees) {
@@ -707,7 +715,8 @@ public:
 			}
 			break;
 		case 3:
-			sort(employees_slr.begin(), employees_slr.end());
+			sort(employees_slr.begin(), employees_slr.end()); //sort function that is contained in algorithm library
+			cout << "\t\t\t\t\tSORT BY SALARY" << endl;
 			table(empl, 1);
 			for (int i = (employees.size() - 1); i >= 0; i--) {
 				for (const auto& empl : employees) {
@@ -721,11 +730,11 @@ public:
 		case 4:
 			cout << '\n';
 			if (chc_c==1) {
-				system("CLS");
+				system("CLS"); //erase all data in console
 				admin_menu(empl);
 			}
 			else if (chc_c == 0) {
-				system("CLS");
+				system("CLS"); //erase all data in console
 				user_menu(empl);
 			}
 			break;
@@ -735,10 +744,9 @@ public:
 
 	//function that executes the searching by last name, first name and table number
 	void search_data(Mode empl, int chc_c) {
-		string lst_name_s, fst_name_s, s_s;
-		int i_s = 0;
+		string lst_name_s, fst_name_s;
 		int tb_n_s;
-		int chc;
+		int chc; //variable for choice
 
 		clear();
 		push(empl);
@@ -763,6 +771,7 @@ public:
 			case 1:
 				cout << "Enter the last name of person: ";
 				cin >> lst_name_s;
+				//"count" functions finds vector's element
 				while (!(count(employees_lst_name.begin(), employees_lst_name.end(), lst_name_s))) {
 					cout << "There isn't person with similar last name..." << endl;
 					cout << "Enter again: ";
@@ -773,7 +782,6 @@ public:
 					empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
 					employees.push_back(empl);
 					if (lst_name_s == empl.lst_name) {
-						s_s = empl.lst_name;
 						table(empl, 3);
 						table(empl, 2);
 					}
@@ -782,6 +790,7 @@ public:
 			case 2:
 				cout << "Enter the first name of person: ";
 				cin >> fst_name_s;
+				//"count" functions finds vector's element
 				while (!(count(employees_fst_name.begin(), employees_fst_name.end(), fst_name_s))) {
 					cout << "There isn't person with similar first name..." << endl;
 					cout << "Enter again: ";
@@ -792,7 +801,6 @@ public:
 					empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
 					employees.push_back(empl);
 					if (fst_name_s == empl.fst_name) {
-						s_s = empl.fst_name;
 						table(empl, 3);
 						table(empl, 2);
 					}
@@ -806,6 +814,7 @@ public:
 					cout << "Enter again: ";
 					cin >> tb_n_s;
 				}
+				//"count" functions finds vector's element
 				while (!(count(employees_tb_num.begin(), employees_tb_num.end(), tb_n_s))) {
 					ignore_func();
 					cout << "There isn't person with similar table number..." << endl;
@@ -817,7 +826,6 @@ public:
 					empl.year >> empl.month >> empl.qnt_work_h >> empl.m_per_h >> empl.salary) {
 					employees.push_back(empl);
 					if (tb_n_s == empl.tab_num) {
-						i_s = empl.tab_num;
 						table(empl, 3);
 						table(empl, 2);
 					}
@@ -826,18 +834,18 @@ public:
 			case 4:
 				cout << '\n';
 				if (chc_c == 1) {
-					system("CLS");
+					system("CLS"); //erase all data in console
 					admin_menu(empl);
 				}
 				else if (chc_c == 0) {
-					system("CLS");
+					system("CLS"); //erase all data in console
 					user_menu(empl);
 				}
 				break;
 			}
 		}
 		else {
-			cout << "Unable to open a file..." << endl;
+			cout << "File doesn't exist..." << endl;
 		}
 		file.close();
 	}
@@ -847,7 +855,7 @@ public:
 
 		string lst_name_s;
 		int tb_n_s, temp_ind = 0;
-		float salary_vv;
+		float salary_vv; //salary for self-calculating
 
 		clear();
 
@@ -855,6 +863,7 @@ public:
 
 		cout << "Enter the last name of employee: ";
 		cin >> lst_name_s;
+		//"count" functions finds vector's element
 		while (!(count(employees_lst_name.begin(), employees_lst_name.end(), lst_name_s))) {
 			cout << '\n';
 			cout << "There isn't person with similar last name..." << endl;
@@ -913,7 +922,7 @@ public:
 				}
 			}
 			else {
-				cout << "Unable to open a file..." << endl;
+				cout << "File doesn't exist..." << endl;
 			}
 		}
 		else {
@@ -939,14 +948,14 @@ public:
 			}
 		}
 		else {
-			cout << "Unable to open a file..." << endl;
+			cout << "File doesn't exist..." << endl;
 		}
 	}
 
 	//function that handle user menu
 	void user_menu(Mode empl) {
-		int chc_i;
-		char chc_c;
+		int chc_i; //variable for choice 
+		char chc_c; //variable for choice 
 
 		do {
 			cout << "\t\t" << "USER MENU" << endl;
@@ -967,7 +976,7 @@ public:
 			}
 			switch (chc_i) {
 			case 1:
-				system("CLS");
+				system("CLS"); //erase all data in console
 				cout << "\t\t" << "SORT DATA" << endl;
 				do {
 					sort_data(empl, 0);
@@ -978,7 +987,7 @@ public:
 				} while (chc_c == 'y');
 				break;
 			case 2:
-				system("CLS");
+				system("CLS"); //erase all data in console
 				cout << "\t\t" << "SEARCH EMPLOYEE" << endl;
 				do {
 					search_data(empl, 0);
@@ -989,7 +998,7 @@ public:
 				} while (chc_c == 'y');
 				break;
 			case 3:
-				system("CLS");
+				system("CLS"); //erase all data in console
 				cout << "\t\t\t\t\t\t" << "VIEW DATA" << endl;
 				do {
 					view_data(empl);
@@ -1000,7 +1009,7 @@ public:
 				} while (chc_c == 'y');
 				break;
 			case 4:
-				system("CLS");
+				system("CLS"); //erase all data in console
 				cout << "\t\t" << "DEFINE EMPLOYEE'S SALARY" << endl;
 				do {
 					define_money(empl);
@@ -1011,16 +1020,16 @@ public:
 				} while (chc_c == 'y');
 				break;
 			case 5:
-				system("CLS");
+				system("CLS"); //erase all data in console
 				cout << "\tWELCOME TO THE PROGRAM" << endl;
 				int r = sign_in(empl, 1);
 
 				switch (r) {
 				case 0:
-					system("CLS");
+					system("CLS"); //erase all data in console
 					user_menu(empl);
 				case 1:
-					system("CLS");
+					system("CLS"); //erase all data in console
 					admin_menu(empl);
 				}
 			}
@@ -1030,8 +1039,8 @@ public:
 	//function that handle admin menu
 	void admin_menu(Mode empl) {
 
-		int chc_i;
-		char chc_c;
+		int chc_i; //variable for choice 
+		char chc_c; //variable for choice 
 
 
 		do {
@@ -1204,17 +1213,17 @@ class Authorization : public Mode {
 public:
 	void start_up() {
 		Authorization au;
-		int chc;
+		int chc; //variable for choice
 
 		cout << "\tWELCOME TO THE PROGRAM" << endl;
 
-		int r = sign_in(au, 1);
-		switch (r) {
+		int si_ch = sign_in(au, 1); //calling "sign_in" function
+		switch (si_ch) {
 		case 0:
-			system("CLS");
+			system("CLS"); //erase all data in console
 			user_menu(au);
 		case 1:
-			system("CLS");
+			system("CLS"); //erase all data in console
 			admin_menu(au);
 		}
 	}
